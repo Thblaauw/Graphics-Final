@@ -58,51 +58,7 @@ public class Project2 {
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     }
     
-    //method: applytransformations
-    //purpose: recieve a set of transformations and apply them in order
-    private void applyTransformations(ArrayList<String> stack){
-        for(int i = stack.size() - 1; i >= 0; i--){
-            String transformation = stack.get(i);
-            if(transformation.charAt(0) == 'r'){
-                //parse into values
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                int angle = Integer.parseInt(transformation.substring(0, transformation.indexOf(" ")));
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                int x_pivot = Integer.parseInt(transformation.substring(0, transformation.indexOf(" ")));
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                int y_pivot = Integer.parseInt(transformation.substring(0, transformation.length()));
-                
-                glRotatef(angle, x_pivot, y_pivot, 1);
-            }// end r
-            else if(transformation.charAt(0) == 't'){
-                //parse into values
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                int x_coord = Integer.parseInt(transformation.substring(0, transformation.indexOf(" ")));
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                int y_coord = Integer.parseInt(transformation.substring(0, transformation.length()));
-                
-                glTranslatef( x_coord, y_coord, 0);
-            }//end t
-            else if(transformation.charAt(0) == 's'){
-                //parse into values
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                float x_value = Float.parseFloat(transformation.substring(0, transformation.indexOf(" ")));
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                float y_value = Float.parseFloat(transformation.substring(0, transformation.indexOf(" ")+1));
-                
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                int x_pivot = Integer.parseInt(transformation.substring(0, transformation.indexOf(" ")));
-                transformation = transformation.substring(transformation.indexOf(" ")+1);
-                int y_pivot = Integer.parseInt(transformation.substring(0, transformation.length()));
-                
-                glTranslatef( -x_pivot, -y_pivot, 0);
-                glScalef(x_value, y_value, 0);
-                glTranslatef( x_pivot, y_pivot, 0);
-            }//end s
-        }
-    }
     
-   
     
     private void renderCube(float sideLength){
         float halfLength = sideLength / 2.0f;
