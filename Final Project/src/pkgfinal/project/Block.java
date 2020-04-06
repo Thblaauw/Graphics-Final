@@ -8,9 +8,11 @@ package pkgfinal.project;
 * class: CS 4450 - Computer Graphics
 *
 * assignment: Final_Project
-* date last modified: Mar 25, 2020 at 9:21:18 AM
+* date last modified: April 6, 2020
 *
-* purpose: ENTER PURPOSE HERE
+* purpose: A data container used for storing properties related
+* to the building blocks of our minecraft game. Has the type,
+* position, and active state.
 *
 ****************************************************************/ 
 
@@ -32,43 +34,63 @@ public class Block {
         
         private int blockID;
         
+        //method: BlockType
+        //purpose: constructor used to take in a id for the block which is its type
         BlockType(int id) {
             this.blockID = id;
         }
         
+        //method: getBlockID
+        //purpose: returns the blockid associated with the block
         public int getBlockID() {
             return blockID;
         }
         
+        //method: setBlockID
+        //purpose: sets the block id to the current block
         public void setBlockID(int id) {
             this.blockID = id;
         }
     }
     
+    //method: Block
+    //purpose: constructor used to take in a block type object to finalize the 
+    //contents of this block made
     public Block(BlockType blockType) {
         this.blockType = blockType;
     }
     
+    //method: setBlockCoordinates
+    //purpose: sets the current blocks coordinates in the world with specified x,y,z. (explicit)
     public void setBlockCoordinates(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
     
+    //method: setBlockCoordinates
+    //purpose: sets the current blocks coordinates in the world with a vector3f object 
+    //with the x,y,z already set in the object. (implicit)
     public void setBlockCoordinates(Vector3f coordinates) {
         this.x = coordinates.x;
         this.y = coordinates.y;
         this.z = coordinates.z;
     }
     
+    //method: isActive
+    //purpose: returns the state of the block whether it be on or off
     public boolean isActive() {
         return this.isActive;
     }
     
+    //method: setActive
+    //purpose: responsible for setting the block on or off to show or destroy
     public void setActive(boolean active) {
         this.isActive = active;
     }
     
+    //method: getBlockID
+    //purpose: gets the block id of the block
     public int getBlockID() {
         return blockType.getBlockID();
     }

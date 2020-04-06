@@ -4,14 +4,21 @@ package pkgfinal.project;
  * *************************************************************
  * file: Chunk.java
  *
- * author: Bryce Callender class: CS 4450 - Computer Graphics
+ * author: Bryce Callender 
+ * class: CS 4450 - Computer Graphics
  *
- * assignment: Final_Project date last modified: Mar 25, 2020 at 9:29:30 AM
+ * assignment: Final_Project 
+ * date last modified: April 6, 2020
  *
- * purpose: ENTER PURPOSE HERE
+ * purpose: This class is responsible for rendering the chunks. 
+ * The chunks have a defined size specified in the class
+ * and will texture the blocks once they are made. If any changes
+ * happen to the chunk the class is responsible for rebuilding 
+ * the chunk
  *
  ***************************************************************
  */
+
 import java.nio.FloatBuffer;
 import java.util.Random;
 import org.lwjgl.BufferUtils;
@@ -23,7 +30,6 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 public class Chunk {
-
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
     private Block[][][] blocks;
@@ -36,6 +42,10 @@ public class Chunk {
 
     private Random random;
 
+    //method: Chunk
+    //purpose: constructs a chunk at the specified x,y, and z value.
+    //Will load in the texture png file to wrap the blocks in as well as generate 
+    //the vertex buffer objets
     public Chunk(int startX, int startY, int startZ) {
         try {
             texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("terrain.png"));
@@ -67,12 +77,16 @@ public class Chunk {
 
         vboVertexHandle = glGenBuffers();
         vboColorHandle = glGenBuffers();
+        vboTextureHandle = glGenBuffers();
         this.startX = startX;
         this.startY = startY;
         this.startZ = startZ;
         rebuildMesh(startX, startY, startZ);
     }
 
+    //method: render
+    //purpose: Binds all the buffers and supplies the data so opengl knows what 
+    //it needs to do when the drawcall is invoked at the end.
     public void render() {
         glPushMatrix();
         //Bind the handle to the buffer
@@ -88,13 +102,16 @@ public class Chunk {
         glBindTexture(GL_TEXTURE_2D, 1);
         glTexCoordPointer(2, GL_FLOAT, 0, 0L); //2 since u and v coordinates
 
-        //THe actual drawcall
+        //The actual drawcall
         //We tell it to draw quads from index to index
         //24 is from a cube having 6 sides with 4 vertices.
         glDrawArrays(GL_QUADS, 0, CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 24);
         glPopMatrix();
     }
 
+    //method: rebuildMesh
+    //purpose: Rebuilds the mesh at the position specified if something changes
+    //with the mesh like object destroyed or possibly placed.
     public void rebuildMesh(float startX, float startY, float startZ) {
         vboVertexHandle = glGenBuffers();
         vboColorHandle = glGenBuffers();
@@ -150,6 +167,8 @@ public class Chunk {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
+    //method: createCubeVertexCol
+    //purpose: colors the cube vertices based on the data supplied
     private float[] createCubeVertexCol(float[] CubeColorArray) {
         float[] cubeColors = new float[CubeColorArray.length * 4 * 6];
         for (int i = 0; i < cubeColors.length; i++) {
@@ -158,6 +177,8 @@ public class Chunk {
         return cubeColors;
     }
 
+    //method: createCube
+    //purpose: creates a cube at the specified coordinates
     public static float[] createCube(float x, float y, float z) {
         int offset = CUBE_LENGTH / 2;
         return new float[]{
@@ -193,6 +214,9 @@ public class Chunk {
             x + offset, y - offset, z};
     }
 
+    //method: getCubeColor
+    //purpose: returns white since the texture is being applied to it and we dont
+    //want the texture changing colors
     private float[] getCubeColor(Block block) {
 //        switch (block.getBlockID()) {
 //            case 0:
@@ -205,6 +229,9 @@ public class Chunk {
         return new float[]{1, 1, 1};
     }
 
+    //method: createTexCube
+    //purpose: coordinates of where the texture that is needed for the block lies.
+    //Will be specified in a clockwise order.
     private float[] createTexCube(float x, float y, Block block) {
         float offset = (1024f / 16) / 1024f;
 
@@ -212,32 +239,32 @@ public class Chunk {
             //Grass
             case 0:
                 return new float[]{
-                    // BOTTOM QUAD(DOWN=+Y)
+                    // TOP
                     x + offset * 3, y + offset * 10,
                     x + offset * 2, y + offset * 10,
                     x + offset * 2, y + offset * 9,
                     x + offset * 3, y + offset * 9,
-                    // TOP!
+                    // Bottom
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
-                    // FRONT QUAD
+                    // Front
                     x + offset * 3, y + offset * 0,
                     x + offset * 4, y + offset * 0,
                     x + offset * 4, y + offset * 1,
                     x + offset * 3, y + offset * 1,
-                    // BACK QUAD
+                    // Back
                     x + offset * 4, y + offset * 1,
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 0,
                     x + offset * 4, y + offset * 0,
-                    // LEFT QUAD
+                    // Left
                     x + offset * 3, y + offset * 0,
                     x + offset * 4, y + offset * 0,
                     x + offset * 4, y + offset * 1,
                     x + offset * 3, y + offset * 1,
-                    // RIGHT QUAD
+                    // Right
                     x + offset * 3, y + offset * 0,
                     x + offset * 4, y + offset * 0,
                     x + offset * 4, y + offset * 1,
@@ -246,32 +273,32 @@ public class Chunk {
             //Sand
             case 1:
                 return new float[]{
-                    // BOTTOM QUAD(DOWN=+Y)
+                    // Top
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
-                    // TOP!
+                    // Bottom
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
-                    // FRONT QUAD
+                    // Front
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
-                    // BACK QUAD
+                    // Back
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
-                    // LEFT QUAD
+                    // Left
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
-                    // RIGHT QUAD
+                    // Right
                     x + offset * 2, y + offset * 1,
                     x + offset * 3, y + offset * 1,
                     x + offset * 3, y + offset * 2,
@@ -280,32 +307,32 @@ public class Chunk {
             //Water
             case 2:
                 return new float[]{
-                    //Top
+                    // Top
                     x + offset * 14, y + offset * 13,
                     x + offset * 13, y + offset * 13,
                     x + offset * 13, y + offset * 12,
                     x + offset * 14, y + offset * 12,
-                    //Bottom
+                    // Bottom
                     x + offset * 14, y + offset * 13,
                     x + offset * 13, y + offset * 13,
                     x + offset * 13, y + offset * 12,
                     x + offset * 14, y + offset * 12,
-                    //Front
+                    // Front
                     x + offset * 14, y + offset * 13,
                     x + offset * 13, y + offset * 13,
                     x + offset * 13, y + offset * 12,
                     x + offset * 14, y + offset * 12,
-                    //Back
+                    // Back
                     x + offset * 14, y + offset * 13,
                     x + offset * 13, y + offset * 13,
                     x + offset * 13, y + offset * 12,
                     x + offset * 14, y + offset * 12,
-                    //Left
+                    // Left
                     x + offset * 14, y + offset * 13,
                     x + offset * 13, y + offset * 13,
                     x + offset * 13, y + offset * 12,
                     x + offset * 14, y + offset * 12,
-                    //Right
+                    // Right
                     x + offset * 14, y + offset * 13,
                     x + offset * 13, y + offset * 13,
                     x + offset * 13, y + offset * 12,
@@ -314,32 +341,32 @@ public class Chunk {
             //Dirt
             case 3:
                 return new float[]{
-                    //Top
+                    // Top
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
-                    //Bottom
+                    // Bottom
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
-                    //Front
+                    // Front
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
-                    //Back
+                    // Back
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
-                    //Left
+                    // Left
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
-                    //Right
+                    // Right
                     x + offset * 2, y + offset * 0,
                     x + offset * 3, y + offset * 0,
                     x + offset * 3, y + offset * 1,
@@ -348,32 +375,32 @@ public class Chunk {
             //Stone
             case 4:
                 return new float[]{
-                    //Top
+                    // Top
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
-                    //Bottom
+                    // Bottom
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
-                    //Front
+                    // Front
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
-                    //Back
+                    // Back
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
-                    //Left
+                    // Left
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
-                    //Right
+                    // Right
                     x + offset * 1, y + offset * 0,
                     x + offset * 2, y + offset * 0,
                     x + offset * 2, y + offset * 1,
@@ -382,32 +409,32 @@ public class Chunk {
             //Bedrock
             case 5:
                 return new float[]{
-                    //Top
+                    // Top
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
-                    //Bottom
+                    // Bottom
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
-                    //Front
+                    // Front
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
-                    //Back
+                    // Back
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
-                    //Left
+                    // Left
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
-                    //Right
+                    // Right
                     x + offset * 1, y + offset * 1,
                     x + offset * 2, y + offset * 1,
                     x + offset * 2, y + offset * 2,

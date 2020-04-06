@@ -1,12 +1,13 @@
 /** *************************************************************
  * file: FinalProject.java
+ * 
  * authors: Thomas Blaauw Barbosa, Bryce Callender, Jordan Laidig
  * class: CS 4450 – Intro to Computer Graphics
  *
  * assignment: Final Project
  * date last modified: 3/4/2020
  *
- * purpose: creates a cube and camera to move around and view it
+ * purpose: creates a textured chunk and camera to move around and view it
  *
  *************************************************************** */
 package pkgfinal.project;

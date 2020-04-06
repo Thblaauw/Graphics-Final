@@ -1,5 +1,6 @@
 /** *************************************************************
  * file: CameraController.java
+ * 
  * authors: Thomas Blaauw Barbosa, Bryce Callender, Jordan Laidig
  * class: CS 4450 – Intro to Computer Graphics
  *
