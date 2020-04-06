@@ -14,12 +14,6 @@ package pkgfinal.project;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import org.lwjgl.util.glu.GLU;
 
 public class FinalProject {
@@ -68,6 +62,11 @@ public class FinalProject {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
         glEnable(GL_DEPTH_TEST); //allows objects to be seen in 3D.
+        
+        //Texture mapping necessities
+        glEnable(GL_TEXTURE_2D);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
