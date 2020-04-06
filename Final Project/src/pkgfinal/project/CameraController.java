@@ -21,6 +21,7 @@ import org.lwjgl.Sys;
 public class CameraController {
     private Vector3f position;
     private Vector3f look;
+    private Chunk viewableChunk;
     
     private float pitch = 0;
     private float yaw = 0;
@@ -108,6 +109,7 @@ public class CameraController {
     //purpose: The loop for what the camera sees.
     public void gameLoop(){
         CameraController camera = new CameraController(position.x, position.y, position.z); //initializes the cameras place.
+        viewableChunk = new Chunk(0, 0, 0);
         float dx;
         float dy;
         float deltaTime;
@@ -152,7 +154,7 @@ public class CameraController {
                 
                 glPushMatrix();
                 
-                render();
+                viewableChunk.render();
                 glPopMatrix();
 
                 Display.update();
@@ -165,7 +167,7 @@ public class CameraController {
     //purpose: this method is responsible for creating the scene
     private void render() {
                 
-        renderCube(10f);
+        renderCube(2f);
 
     }
     

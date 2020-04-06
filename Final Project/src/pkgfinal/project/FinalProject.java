@@ -27,12 +27,13 @@ public class FinalProject {
     private final int WIDTH = 640;
     private final int HEIGHT = 480;
 
-    private CameraController camera = new CameraController(0f, 0f, -15f); //creates the camera
+    private CameraController camera;
     private DisplayMode displayMode;
 
     //method: Start
     //purpose: This is used to start the window and run the program
     public void start() {
+        camera = new CameraController(0f, 0f, -20f); //creates the camera
         try {
             createWindow();
             initGL();
@@ -64,6 +65,8 @@ public class FinalProject {
     //used in the program
     private void initGL() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
         glEnable(GL_DEPTH_TEST); //allows objects to be seen in 3D.
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
