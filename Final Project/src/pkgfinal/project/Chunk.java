@@ -116,7 +116,15 @@ public class Chunk {
         vboVertexHandle = glGenBuffers();
         vboColorHandle = glGenBuffers();
         vboTextureHandle = glGenBuffers();
-
+        int SEED = 234;
+        float PERSISTENCE = 0.05f;
+        int LARGEST_FEATURE = 30;
+        SimplexNoise noise = new SimplexNoise(LARGEST_FEATURE, PERSISTENCE, SEED);
+        //int i = (int)(xStart+x*((XEnd-xStart)/xResolution));
+        //int j = (int)(xStart+x*((XEnd-xStart)/xResolution));
+        //int k = (int)(xStart+x*((XEnd-xStart)/xResolution));
+        //float maxHeight = (startY + (int)(100*noise.getNoise()) * CUBE_LENGTH);
+        //System.out.println(maxHeight);
         //Create a float buffer.
         //6 for each face 
         //12 is for each vertex and each vertex has an x,y,z. 4 * 3 => 12
@@ -126,9 +134,15 @@ public class Chunk {
 
         //Since we are on the XZ plane they are first and then we can go 
         //layer by layer thus y being last inner loop
+        float xResolution = 50f;
+        float zResolution = 50f;
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
-                for (int y = 0; y < CHUNK_SIZE; y++) {
+                int i = (int)(x*((30)/xResolution));
+                int j = (int)(z*((30)/zResolution));
+                float maxHeight = ((startY + (int)(100*noise.getNoise(i, j, 25)) * CUBE_LENGTH) % 30)/2;
+                System.out.println(maxHeight);
+                for (int y = 0; (y <= maxHeight + 10); y++) {
                     vertexPositionData.put(
                             createCube(
                                     (float) (startX + x * CUBE_LENGTH),
