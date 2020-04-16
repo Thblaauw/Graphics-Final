@@ -22,6 +22,7 @@ public class Block {
     private boolean isActive;
     private BlockType blockType;
     private float x,y,z;
+    private int hitCount;
     
     public enum BlockType {
         Grass(0), 
@@ -58,6 +59,8 @@ public class Block {
     //contents of this block made
     public Block(BlockType blockType) {
         this.blockType = blockType;
+        this.hitCount = 0;
+        this.isActive = true;
     }
     
     //method: setBlockCoordinates

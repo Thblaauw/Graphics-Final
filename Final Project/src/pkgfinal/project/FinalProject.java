@@ -12,13 +12,14 @@
  *************************************************************** */
 package pkgfinal.project;
 
+import java.nio.FloatBuffer;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.util.glu.GLU;
 
 public class FinalProject {
-
     private final int WIDTH = 640;
     private final int HEIGHT = 480;
 
@@ -67,6 +68,13 @@ public class FinalProject {
         //Texture mapping necessities
         glEnable(GL_TEXTURE_2D);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        
+        glEnable(GL_LIGHTING); //enables our lighting
+        glEnable(GL_LIGHT0);   //enables light0 (sun)
+        
+        //Allows the alpha channel to be exposed and shown to the user
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
         
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();

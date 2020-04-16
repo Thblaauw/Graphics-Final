@@ -23,6 +23,7 @@ public class CameraController {
     private Vector3f position;
     private Vector3f look;
     private Chunk viewableChunk;
+    private DayCycle dayCycle;
     
     private float pitch = 0;
     private float yaw = 0;
@@ -110,11 +111,15 @@ public class CameraController {
     //purpose: The loop for what the camera sees.
     public void gameLoop(){
         CameraController camera = new CameraController(position.x, position.y, position.z); //initializes the cameras place.
+        
+        dayCycle = new DayCycle();
+        dayCycle.initDayCycle();
         viewableChunk = new Chunk(0, 0, 0);
+        
         float dx;
         float dy;
         float deltaTime;
-        float previousTime;
+        float previousTime = 0;
         long time;
         
         float mouseSensitivity = 0.1f; //used to see how fast the camera view moves.
@@ -122,14 +127,15 @@ public class CameraController {
         Mouse.setGrabbed(true); //makes sure the cursor isnt in the way.
         
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-            
             time = Sys.getTime();
+            deltaTime = time - previousTime;
             previousTime = time;
             dx = Mouse.getDX();
             dy = Mouse.getDY();
-            
-            camera.updateYaw(dx * mouseSensitivity); //rotates the camer in correspondence with the mouse movement.
+                
+            camera.updateYaw(dx * mouseSensitivity); //rotates the camera in correspondence with the mouse movement.
             camera.updatePitch(dy * mouseSensitivity);
+            
             if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
                 camera.moveForward(movementSpeed);
             }
@@ -148,6 +154,9 @@ public class CameraController {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                 camera.moveUp(movementSpeed);
             }
+            if(Keyboard.isKeyDown(Keyboard.KEY_N)) {
+                viewableChunk.rebuildMesh(0,0,0);
+            }
             try {
                 glLoadIdentity(); 
                 camera.lookAt(); //updates the look vector.
@@ -156,6 +165,8 @@ public class CameraController {
                 glPushMatrix();
                 
                 viewableChunk.render();
+                dayCycle.updateLightPositions(0.0005f);
+                
                 glPopMatrix();
 
                 Display.update();
@@ -164,64 +175,4 @@ public class CameraController {
         }
         Display.destroy();
     }
-    //method: render
-    //purpose: this method is responsible for creating the scene
-    private void render() {
-                
-        renderCube(2f);
-
-    }
-    
-    //method: renderCube
-    //purpose: this method is responsible for creating the cube in the scene.
-    private void renderCube(float sideLength) {
-        float halfLength = sideLength / 2.0f;
-        try {
-            glBegin(GL_QUADS);
-            // Top face (y = halfLength)
-            // Define vertices in counter-clockwise (CCW) order with normal pointing out
-            glColor3f(0.0f, 1.0f, 0.0f);     // Green
-            glVertex3f(halfLength, halfLength, -halfLength);
-            glVertex3f(-halfLength, halfLength, -halfLength);
-            glVertex3f(-halfLength, halfLength, halfLength);
-            glVertex3f(halfLength, halfLength, halfLength);
-
-            // Bottom face (y = -halfLength)
-            glColor3f(1.0f, 0.5f, 0.0f);     // Orange
-            glVertex3f(halfLength, -halfLength, halfLength);
-            glVertex3f(-halfLength, -halfLength, halfLength);
-            glVertex3f(-halfLength, -halfLength, -halfLength);
-            glVertex3f(halfLength, -halfLength, -halfLength);
-
-            // Front face  (z = halfLength)
-            glColor3f(1.0f, 0.0f, 0.0f);     // Red
-            glVertex3f(halfLength, halfLength, halfLength);
-            glVertex3f(-halfLength, halfLength, halfLength);
-            glVertex3f(-halfLength, -halfLength, halfLength);
-            glVertex3f(halfLength, -halfLength, halfLength);
-
-            // Back face (z = -halfLength)
-            glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
-            glVertex3f(halfLength, -halfLength, -halfLength);
-            glVertex3f(-halfLength, -halfLength, -halfLength);
-            glVertex3f(-halfLength, halfLength, -halfLength);
-            glVertex3f(halfLength, halfLength, -halfLength);
-
-            // Left face (x = -halfLength)
-            glColor3f(0.0f, 0.0f, 1.0f);     // Blue
-            glVertex3f(-halfLength, halfLength, halfLength);
-            glVertex3f(-halfLength, halfLength, -halfLength);
-            glVertex3f(-halfLength, -halfLength, -halfLength);
-            glVertex3f(-halfLength, -halfLength, halfLength);
-
-            // Right face (x = halfLength)
-            glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
-            glVertex3f(halfLength, halfLength, -halfLength);
-            glVertex3f(halfLength, halfLength, halfLength);
-            glVertex3f(halfLength, -halfLength, halfLength);
-            glVertex3f(halfLength, -halfLength, -halfLength);
-            glEnd();  // End of drawing color-cube
-        } catch (Exception e) {}
-    }
-
 }
