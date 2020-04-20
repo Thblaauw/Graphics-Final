@@ -35,7 +35,7 @@ public class DayCycle {
         sunPosition.put(0.0f).put(0.0f).put(0.0f).put(1.0f).flip();
 
         sunlight = BufferUtils.createFloatBuffer(4);
-        sunlight.put(3.0f).put(3.0f).put(3.0f).put(0.0f).flip();
+        sunlight.put(1.0f).put(1.0f).put(1.0f).put(1.0f).flip();
     }
 
     void initDayCycle() {
@@ -61,16 +61,13 @@ public class DayCycle {
             glVertex2f(0f, 0f);
         glEnd();
         glPopMatrix();
+            
+        //glLight(GL_LIGHT0, GL_POSITION, sunPosition); //sets our light’s position
         
-        sunPosition = BufferUtils.createFloatBuffer(4);
-        sunPosition.put(0.0f).put(0.0f).put(0.0f).put(1.0f).flip();
-        
-        glLight(GL_LIGHT0, GL_POSITION, sunPosition); //sets our light’s position
-        
-        renderCube((float)(DISTANCE * Math.cos(moonTheta)), (float)(DISTANCE * Math.sin(moonTheta)), 0f, 10.0f);
+        //renderCube((float)(DISTANCE * Math.cos(moonTheta)), (float)(DISTANCE * Math.sin(moonTheta)), 0f, 10.0f);
         
         sunTheta += deltaTime;
-        moonTheta += deltaTime;
+        //moonTheta += deltaTime;
     }
     
     //method: renderCube
@@ -80,7 +77,14 @@ public class DayCycle {
              
         glPushMatrix();
         
+//        glLight(GL_LIGHT0, GL_POSITION, sunPosition); //sets our light’s position
+        
         glTranslatef(x,y,z);
+        
+//        sunPosition = BufferUtils.createFloatBuffer(4);
+//        sunPosition.put(0.0f).put(0.0f).put(0.0f).put(1.0f).flip();
+        
+//        glLight(GL_LIGHT0, GL_POSITION, sunPosition); //sets our light’s position
         
         try {
             glBegin(GL_QUADS);

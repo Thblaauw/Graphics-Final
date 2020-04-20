@@ -63,6 +63,7 @@ public class FinalProject {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
+        //glEnableClientState(GL_NORMAL_ARRAY);
         glEnable(GL_DEPTH_TEST); //allows objects to be seen in 3D.
         
         //Texture mapping necessities
@@ -75,6 +76,8 @@ public class FinalProject {
         //Allows the alpha channel to be exposed and shown to the user
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
+        
+        glEnable(GL_COLOR_MATERIAL);
         
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();

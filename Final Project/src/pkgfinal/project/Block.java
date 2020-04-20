@@ -20,9 +20,11 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Block {
     private boolean isActive;
-    private BlockType blockType;
+    public BlockType blockType;
     private float x,y,z;
-    private int hitCount;
+    private int hitCount; //Used for breaking texture
+    //AABB collider; //collider for the Blocks
+    //private boolean isCollidable; //Can we hit the block?
     
     public enum BlockType {
         Grass(0), 
