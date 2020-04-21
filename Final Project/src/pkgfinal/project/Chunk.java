@@ -30,8 +30,14 @@ public class Chunk {
 
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
+
+    static final int SEA_LEVEL = 10;
+    static final int MAX_LAKE_RADIUS = 10;
+    static final int MIN_LAKE_RADIUS = 5;
+
     private Block[][][] blocks;
     private int[][][] textureLocation;
+    private int textureStartLocation;
     //vbo = vertex buffer object
     private int vboVertexHandle;
     private int vboColorHandle;
@@ -56,6 +62,7 @@ public class Chunk {
         random = new Random();
         blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
         textureLocation = new int[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+        textureStartLocation = 0;
 
         // Fill each row with -1.  
         for (int[][] row : textureLocation) {
@@ -125,7 +132,6 @@ public class Chunk {
         //layer by layer thus y being last inner loop
         float xResolution = 50f;
         float zResolution = 50f;
-        int textureStartLocation = 0;
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 int i = (int) (x * ((30) / xResolution));
@@ -170,9 +176,7 @@ public class Chunk {
             }
         }
 
-        generateWater(vertexTextureData);
-        
-        resetTextureData(vertexTextureData);
+        generateWater(vertexPositionData, vertexColorData, vertexTextureData);
 
         vertexPositionData.flip();
         vertexColorData.flip();
@@ -482,57 +486,81 @@ public class Chunk {
         return new float[]{};
     }
 
-    private void generateWater(FloatBuffer vertexTextureData) {
+    private void generateWater(FloatBuffer vertexPositionData, FloatBuffer vertexColorData, FloatBuffer vertexTextureData) {
         float bodyOfWaterDecider = random.nextFloat();
 
-        int waterStartX = random.nextInt(CHUNK_SIZE - 5);
-        int waterStartY = 10;
-        int waterStartZ = random.nextInt(CHUNK_SIZE - 5);
+        if (bodyOfWaterDecider > 0.7f) {
+            int waterStartX = random.nextInt(CHUNK_SIZE - 5) + 1;
+            int waterStartY = SEA_LEVEL;
+            int waterStartZ = random.nextInt(CHUNK_SIZE - 5) + 1;
 
-        int depth = random.nextInt((int) (CHUNK_SIZE * 0.30f));
+            int depth = random.nextInt((int) (CHUNK_SIZE * 0.30f));
 
-        int radius = random.nextInt(10) + 5;
+            int radius = random.nextInt(10) + 5;
 
-        System.out.println("Start X: " + waterStartX);
-        System.out.println("Start Z: " + waterStartZ);
-        System.out.println("Length: " + radius);
-        System.out.println("Depth: " + depth);
+            int endingX = waterStartX + radius >= CHUNK_SIZE ? CHUNK_SIZE - 1 : waterStartX + radius;
+            int endingZ = waterStartZ + radius >= CHUNK_SIZE ? CHUNK_SIZE - 1 : waterStartZ + radius;
 
-        int endingX = waterStartX + radius >= CHUNK_SIZE ? CHUNK_SIZE - 1 : waterStartX + radius;
-        int endingZ = waterStartZ + radius >= CHUNK_SIZE ? CHUNK_SIZE - 1 : waterStartZ + radius;
+            for (int x = waterStartX; x < endingX; x++) {
+                for (int z = waterStartZ; z < endingZ; z++) {
+                    for (int y = waterStartY; y >= waterStartY - depth; y--) {
+                        changeBlockInformation(x, y, z, Block.BlockType.Water, vertexPositionData, vertexColorData, vertexTextureData);
+                    }
+                }
+            }
 
-        for (int x = waterStartX; x < endingX; x++) {
-            for (int z = waterStartZ; z < endingZ; z++) {
-                for (int y = waterStartY; y >= waterStartY - depth; y--) {
-                    if (y > 5) {
-                        int index = textureLocation[x][y][z];
+            generateSandyBorders(waterStartX, waterStartY, waterStartZ, radius, depth, vertexPositionData, vertexColorData, vertexTextureData);
+        }
+    }
 
-                        if (index == -1) {
-                            continue;
-                        }
+    private void generateSandyBorders(int waterStartX, int waterStartY, int waterStartZ,
+            int radius, int depth,
+            FloatBuffer vertexPositionData, FloatBuffer vertexColorData, FloatBuffer vertexTextureData) {
 
-                        //System.out.println("{" + x + ", " + y + ", " + z + "}");
+        int beginningX = waterStartX - 1;
+        int beginningZ = waterStartZ - 1;
 
-                        blocks[x][y][z] = new Block(Block.BlockType.Water);
-                        //vertexTextureData.put(index, createTexCube((float) 0, (float) 0, blocks[x][y][z]));
+        int endingX = beginningX + radius + 2 >= CHUNK_SIZE ? CHUNK_SIZE : beginningX + radius + 2;
+        int endingZ = beginningZ + radius + 2 >= CHUNK_SIZE ? CHUNK_SIZE : beginningZ + radius + 2;
+
+        //Start 
+        for (int x = beginningX; x < endingX; x++) {
+            for (int z = beginningZ; z < endingZ; z++) {
+                for (int y = waterStartY; y >= waterStartY - depth - 1; y--) {
+                    if (blocks[x][y][z] == null || blocks[x][y][z].getBlockID() != Block.BlockType.Water.ordinal()) {
+                        changeBlockInformation(x, y, z, Block.BlockType.Sand, vertexPositionData, vertexColorData, vertexTextureData);
                     }
                 }
             }
         }
     }
 
-    private void resetTextureData(FloatBuffer vertexTextureData) {
-        vertexTextureData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+    private void changeBlockInformation(int x, int y, int z, Block.BlockType blockType,
+            FloatBuffer vertexPositionData, FloatBuffer vertexColorData, FloatBuffer vertexTextureData) {
+        int index = textureLocation[x][y][z];
 
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-            for (int z = 0; z < CHUNK_SIZE; z++) {
-                for (int y = 0; y < CHUNK_SIZE; y++) {
-                    if(blocks[x][y][z] != null) {
-                        //System.out.println(blocks[x][y][z].blockType);
-                        vertexTextureData.put(createTexCube((float) 0, (float) 0, blocks[x][y][z]));
-                    }
-                }
-            }
+        if (index == -1) {
+            vertexPositionData.put(
+                    createCube(
+                            (float) (startX + x * CUBE_LENGTH),
+                            (float) (y * CUBE_LENGTH + (int) (CHUNK_SIZE * 0.8)),
+                            (float) (startZ + z * CUBE_LENGTH)
+                    )
+            );
+
+            vertexColorData.put(createCubeVertexCol(getCubeColor(blocks[x][y][z])));
+
+            textureLocation[x][y][z] = textureStartLocation;
+
+            textureStartLocation += 48;
+
+            blocks[x][y][z] = new Block(blockType);
+            vertexTextureData.put(createTexCube((float) 0, (float) 0, blocks[x][y][z]));
+
+            return;
         }
+
+        blocks[x][y][z] = new Block(blockType);
+        vertexTextureData.put(index, createTexCube((float) 0, (float) 0, blocks[x][y][z]));
     }
 }

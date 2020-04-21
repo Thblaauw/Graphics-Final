@@ -159,7 +159,7 @@ public class CameraController {
                 camera.moveUp(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_N)) {
-                viewableChunk.rebuildMesh(0, 0, 0);
+                viewableChunk = new Chunk(0,0,0);
             }
             try {
                 glLoadIdentity();

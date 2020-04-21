@@ -20,7 +20,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class Block {
     private boolean isActive;
-    public BlockType blockType;
+    private BlockType blockType;
     private float x,y,z;
     private int hitCount; //Used for breaking texture
     //AABB collider; //collider for the Blocks
