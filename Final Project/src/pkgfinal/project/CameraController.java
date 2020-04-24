@@ -110,7 +110,13 @@ public class CameraController {
         glRotatef(yaw, 0f, 1f, 0f);
         glTranslatef(position.x, position.y, position.z);
     }
-
+    
+    //method: isOnFloor
+    //purpose: verify if the player is on the floor
+    boolean isOnFloor(){
+        return false;
+    }
+    
     //method: gameLoop
     //purpose: The loop for what the camera sees.
     public void gameLoop() {
@@ -125,6 +131,10 @@ public class CameraController {
         float deltaTime;
         float previousTime = 0;
         long time;
+        
+        final float GRAVITY_ACCELERATION = -0.01f;
+        final float JUMP_STRENGTH = 0.4f;
+        float yVelocity = 0.0f;
 
         float mouseSensitivity = 0.1f; //used to see how fast the camera view moves.
         float movementSpeed = 0.4f; //used to see how fast the player can move.
@@ -161,6 +171,26 @@ public class CameraController {
             if (Keyboard.isKeyDown(Keyboard.KEY_N)) {
                 viewableChunk = new Chunk(0,0,0);
             }
+            //jump
+            //updates the yVelocity
+            camera.moveDown(yVelocity);
+            
+            if(!isOnFloor()){
+                yVelocity += GRAVITY_ACCELERATION;
+            }
+            else{
+                yVelocity = 0.0f;
+            }
+            //
+            if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+                
+                yVelocity = JUMP_STRENGTH;
+                if(isOnFloor()){
+                    //when isOnFloorWorking, uncomment nd delete line 187
+                    //yVelocity = JUMP_STRENGTH;
+                }
+            }
+                    
             try {
                 glLoadIdentity();
                 camera.lookAt(); //updates the look vector.
