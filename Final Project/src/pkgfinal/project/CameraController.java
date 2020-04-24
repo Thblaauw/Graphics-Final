@@ -25,6 +25,8 @@ public class CameraController {
     private Vector3f look;
     private Chunk viewableChunk;
     private DayCycle dayCycle;
+    private Vector3f colliderSize;
+    private boolean moveableUp = true, moveableDown = true, moveableLeft = true, moveableRight = true, moveableFront = true, moveableBack = true;
 
     private float pitch = 0;
     private float yaw = 0;
@@ -34,13 +36,14 @@ public class CameraController {
     CameraController(float x, float y, float z) {
         position = new Vector3f(x, y, z);
         look = new Vector3f(0f, 15f, 0f);
+        colliderSize = new Vector3f(Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH, Chunk.CUBE_LENGTH/2);
     }
 
     //method: updateYaw
     //purpose: changes the yaw
     public void updateYaw(float amount) {
         yaw += amount;
-    }
+    };
 
     //method: updatePitch
     //purpose: changes the pitch and makes sure it cant cross a certain threshold.
@@ -110,6 +113,136 @@ public class CameraController {
         glRotatef(yaw, 0f, 1f, 0f);
         glTranslatef(position.x, position.y, position.z);
     }
+    private boolean checkLeftCollision(Block block){
+        if(position.y + colliderSize.y >= block.getBlockCoordinates().y - block.colliderSize.y && position.y - colliderSize.y <= block.getBlockCoordinates().y + block.colliderSize.y)
+        {
+            if(position.z + colliderSize.z >= block.getBlockCoordinates().z - block.colliderSize.z && position.z - colliderSize.z <= block.getBlockCoordinates().z + block.colliderSize.z)
+            {
+                return position.x - colliderSize.x <= block.getBlockCoordinates().x + block.colliderSize.x;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    
+    private boolean checkRightCollision(Block block){
+        if(position.y + colliderSize.y >= block.getBlockCoordinates().y - block.colliderSize.y && position.y - colliderSize.y <= block.getBlockCoordinates().y + block.colliderSize.y)
+        {
+            if(position.z + colliderSize.z >= block.getBlockCoordinates().z - block.colliderSize.z && position.z - colliderSize.z <= block.getBlockCoordinates().z + block.colliderSize.z)
+            {
+                 return position.x + colliderSize.x >= block.getBlockCoordinates().x - block.colliderSize.x;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        } 
+    }
+    
+    private boolean checkFrontCollision(Block block){
+        if(position.y + colliderSize.y >= block.getBlockCoordinates().y - block.colliderSize.y && position.y - colliderSize.y <= block.getBlockCoordinates().y + block.colliderSize.y)
+        {
+            if(position.x + colliderSize.x >= block.getBlockCoordinates().x - block.colliderSize.x && position.x - colliderSize.x <= block.getBlockCoordinates().x + block.colliderSize.x)
+            {
+                return position.z + colliderSize.z >= block.getBlockCoordinates().z - block.colliderSize.z;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    
+    private boolean checkBackCollision(Block block){
+        if(position.y + colliderSize.y >= block.getBlockCoordinates().y - block.colliderSize.y && position.y - colliderSize.y <= block.getBlockCoordinates().y + block.colliderSize.y)
+        {
+            if(position.x + colliderSize.x >= block.getBlockCoordinates().x - block.colliderSize.x && position.x - colliderSize.x <= block.getBlockCoordinates().x + block.colliderSize.x)
+            {
+                return position.z - colliderSize.z <= block.getBlockCoordinates().z + block.colliderSize.z;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    
+    private boolean checkBottomCollision(Block block){
+        if(position.z + colliderSize.z >= block.getBlockCoordinates().z - block.colliderSize.z && position.z - colliderSize.z <= block.getBlockCoordinates().z + block.colliderSize.z)
+        {
+            if(position.x + colliderSize.x >= block.getBlockCoordinates().x - block.colliderSize.x && position.x - colliderSize.x <= block.getBlockCoordinates().x + block.colliderSize.x)
+            {
+                 return position.y - colliderSize.y <= block.getBlockCoordinates().y + block.colliderSize.y;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    
+    private boolean checkTopCollision(Block block){
+        if(position.z + colliderSize.z >= block.getBlockCoordinates().z - block.colliderSize.z && position.z - colliderSize.z <= block.getBlockCoordinates().z + block.colliderSize.z)
+        {
+            if(position.x + colliderSize.x >= block.getBlockCoordinates().x - block.colliderSize.x && position.x - colliderSize.x <= block.getBlockCoordinates().x + block.colliderSize.x)
+            {
+                 return position.y + colliderSize.y >= block.getBlockCoordinates().y - block.colliderSize.y;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    
+    public void doCollisions(){
+        viewableChunk.getBlock(0, 0, 0);
+        
+        moveableLeft = false;
+        moveableRight = false;
+        moveableUp = false;
+        moveableDown = false;
+        moveableFront = false;
+        moveableBack = false;
+        
+        
+        /*
+        for(int i = 0; i < Chunk.CHUNK_SIZE; i++)
+        {
+            for(int j = 0; j < Chunk.CHUNK_SIZE; j++)
+            {
+                for(int k = 0; k < Chunk.CHUNK_SIZE; k++)
+                {
+                    if(!moveableLeft)
+                        moveableLeft = checkLeftCollision(blocks[i][j][k]);
+                    if(!moveableRight)
+                        moveableRight = checkRightCollision(blocks[i][j][k]);
+                    if(!moveableUp)
+                        moveableUp = checkTopCollision(blocks[i][j][k]);
+                    if(!moveableDown)
+                        moveableDown = checkBottomCollision(blocks[i][j][k]);
+                    if(!moveableFront)
+                        moveableFront = checkFrontCollision(blocks[i][j][k]);
+                    if(!moveableBack)
+                        moveableBack = checkBackCollision(blocks[i][j][k]);
+                }
+            }
+        }*/
+    }
 
     //method: gameLoop
     //purpose: The loop for what the camera sees.
@@ -119,6 +252,7 @@ public class CameraController {
         dayCycle = new DayCycle();
         dayCycle.initDayCycle();
         viewableChunk = new Chunk(0, 0, 0);
+        camera.doCollisions();
 
         float dx;
         float dy;
@@ -139,23 +273,24 @@ public class CameraController {
 
             camera.updateYaw(dx * mouseSensitivity); //rotates the camera in correspondence with the mouse movement.
             camera.updatePitch(dy * mouseSensitivity);
+            
 
-            if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+            if ((Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) && moveableFront) {
                 camera.moveForward(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+            if ((Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) && moveableLeft) {
                 camera.moveLeft(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+            if ((Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) && moveableBack) {
                 camera.moveBackward(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+            if ((Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) && moveableRight) {
                 camera.moveRight(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && moveableUp) {
                 camera.moveDown(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+            if ((Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) && moveableDown) {
                 camera.moveUp(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_N)) {

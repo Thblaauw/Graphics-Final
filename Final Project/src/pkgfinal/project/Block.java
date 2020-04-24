@@ -23,7 +23,7 @@ public class Block {
     private BlockType blockType;
     private float x,y,z;
     private int hitCount; //Used for breaking texture
-    //AABB collider; //collider for the Blocks
+    public Vector3f colliderSize; //collider for the Blocks
     //private boolean isCollidable; //Can we hit the block?
     
     public enum BlockType {
@@ -63,6 +63,7 @@ public class Block {
         this.blockType = blockType;
         this.hitCount = 0;
         this.isActive = true;
+        this.colliderSize = new Vector3f(Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2);
     }
     
     //method: setBlockCoordinates
@@ -80,6 +81,13 @@ public class Block {
         this.x = coordinates.x;
         this.y = coordinates.y;
         this.z = coordinates.z;
+    }
+    
+    public Vector3f getBlockCoordinates(){
+        Vector3f position = new Vector3f(x, y, z);
+
+        return position;
+        
     }
     
     //method: isActive

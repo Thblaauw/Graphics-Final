@@ -21,7 +21,6 @@ import java.util.Random;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -208,6 +207,10 @@ public class Chunk {
             cubeColors[i] = cubeColorArray[i % cubeColorArray.length];
         }
         return cubeColors;
+    }
+    
+    public Block getBlock(int i, int j, int k){
+        return blocks[i][j][k];
     }
 
     //method: createCube
