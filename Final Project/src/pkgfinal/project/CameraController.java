@@ -120,7 +120,7 @@ public class CameraController {
     //method: gameLoop
     //purpose: The loop for what the camera sees.
     public void gameLoop() {
-        CameraController camera = new CameraController(position.x, position.y, position.z); //initializes the cameras place.
+        //CameraController camera = new CameraController(position.x, position.y, position.z); //initializes the cameras place.
 
         dayCycle = new DayCycle();
         dayCycle.initDayCycle();
@@ -147,33 +147,33 @@ public class CameraController {
             dx = Mouse.getDX();
             dy = Mouse.getDY();
 
-            camera.updateYaw(dx * mouseSensitivity); //rotates the camera in correspondence with the mouse movement.
-            camera.updatePitch(dy * mouseSensitivity);
+            updateYaw(dx * mouseSensitivity); //rotates the camera in correspondence with the mouse movement.
+            updatePitch(dy * mouseSensitivity);
 
             if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-                camera.moveForward(movementSpeed);
+                moveForward(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-                camera.moveLeft(movementSpeed);
+                moveLeft(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-                camera.moveBackward(movementSpeed);
+                moveBackward(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-                camera.moveRight(movementSpeed);
+                moveRight(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-                camera.moveDown(movementSpeed);
+                moveDown(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-                camera.moveUp(movementSpeed);
+                moveUp(movementSpeed);
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_N)) {
                 viewableChunk = new Chunk(0,0,0);
             }
             //jump
             //updates the yVelocity
-            camera.moveDown(yVelocity);
+            moveDown(yVelocity);
             
             if(!isOnFloor()){
                 yVelocity += GRAVITY_ACCELERATION;
@@ -193,57 +193,11 @@ public class CameraController {
                     
             try {
                 glLoadIdentity();
-                camera.lookAt(); //updates the look vector.
+                lookAt(); //updates the look vector.
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 viewableChunk.render();
                 dayCycle.updateLightPositions(0.0005f);
-
-                glColor3f(1.0f, 0.0f, 0.0f); // red x
-                glBegin(GL_LINES);
-                // x 
-
-                glVertex3f(-4.0f, 0.0f, 0.0f);
-                glVertex3f(4.0f, 0.0f, 0.0f);
-
-                // arrow
-                glVertex3f(4.0f, 0.0f, 0.0f);
-                glVertex3f(3.0f, 1.0f, 0.0f);
-
-                glVertex3f(4.0f, 0.0f, 0.0f);
-                glVertex3f(3.0f, -1.0f, 0.0f);
-                glEnd();
-                glFlush();
-
-                // y 
-                glColor3f(0.0f, 1.0f, 0.0f); // green y
-                glBegin(GL_LINES);
-                glVertex3f(0.0f, -4.0f, 0.0f);
-                glVertex3f(0.0f, 4.0f, 0.0f);
-
-                // arrow
-                glVertex3f(0.0f, 4.0f, 0.0f);
-                glVertex3f(1.0f, 3.0f, 0.0f);
-
-                glVertex3f(0.0f, 4.0f, 0.0f);
-                glVertex3f(-1.0f, 3.0f, 0.0f);
-                glEnd();
-                glFlush();
-
-                // z 
-                glColor3f(0.0f, 0.0f, 1.0f); // blue z
-                glBegin(GL_LINES);
-                glVertex3f(0.0f, 0.0f, -4.0f);
-                glVertex3f(0.0f, 0.0f, 4.0f);
-
-                // arrow
-                glVertex3f(0.0f, 0.0f, 4.0f);
-                glVertex3f(0.0f, 1.0f, 3.0f);
-
-                glVertex3f(0.0f, 0.0f, 4.0f);
-                glVertex3f(0.0f, -1.0f, 3.0f);
-                glEnd();
-                glFlush();
 
                 Display.update();
                 Display.sync(60);

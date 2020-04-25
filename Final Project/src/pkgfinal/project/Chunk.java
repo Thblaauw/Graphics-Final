@@ -496,7 +496,7 @@ public class Chunk {
 
             int depth = random.nextInt((int) (CHUNK_SIZE * 0.30f));
 
-            int radius = random.nextInt(10) + 5;
+            int radius = random.nextInt(MAX_LAKE_RADIUS) + MIN_LAKE_RADIUS;
 
             int endingX = waterStartX + radius >= CHUNK_SIZE ? CHUNK_SIZE - 1 : waterStartX + radius;
             int endingZ = waterStartZ + radius >= CHUNK_SIZE ? CHUNK_SIZE - 1 : waterStartZ + radius;
@@ -563,4 +563,5 @@ public class Chunk {
         blocks[x][y][z] = new Block(blockType);
         vertexTextureData.put(index, createTexCube((float) 0, (float) 0, blocks[x][y][z]));
     }
+    
 }
