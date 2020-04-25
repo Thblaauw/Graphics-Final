@@ -21,6 +21,7 @@ import java.util.Random;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -148,24 +149,25 @@ public class Chunk {
 
                     textureLocation[x][y][z] = textureStartLocation;
                     textureStartLocation += 48;
+                    Vector3f position = new Vector3f((startX + x * CUBE_LENGTH) * -1, (y *CUBE_LENGTH + (int)(CHUNK_SIZE * 0.8)) * -1, (startZ + z * CUBE_LENGTH) * -1);
 
                     //Base ground
                     if (y == 0) {
-                        blocks[x][y][z] = new Block(Block.BlockType.Bedrock);
+                        blocks[x][y][z] = new Block(Block.BlockType.Bedrock, position);
                     } else if (y == 1) { //If we one above ground we can do mix of bedrock and stone since they cant break through the bottom
                         if (random.nextFloat() > 0.7f) {
-                            blocks[x][y][z] = new Block(Block.BlockType.Bedrock);
+                            blocks[x][y][z] = new Block(Block.BlockType.Bedrock, position);
                         } else {
-                            blocks[x][y][z] = new Block(Block.BlockType.Stone);
+                            blocks[x][y][z] = new Block(Block.BlockType.Stone, position);
                         }
                     } else if (y > 1 && y < maxHeight + 10) {
                         if (random.nextFloat() > 0.5f) {
-                            blocks[x][y][z] = new Block(Block.BlockType.Dirt);
+                            blocks[x][y][z] = new Block(Block.BlockType.Dirt, position);
                         } else {
-                            blocks[x][y][z] = new Block(Block.BlockType.Stone);
+                            blocks[x][y][z] = new Block(Block.BlockType.Stone, position);
                         }
                     } else {
-                        blocks[x][y][z] = new Block(Block.BlockType.Grass);
+                        blocks[x][y][z] = new Block(Block.BlockType.Grass, position);
                     }
 
                     vertexColorData.put(createCubeVertexCol(getCubeColor(blocks[(int) x][(int) y][(int) z])));
@@ -552,12 +554,13 @@ public class Chunk {
             );
 
             vertexColorData.put(createCubeVertexCol(getCubeColor(blocks[x][y][z])));
+            Vector3f position = new Vector3f((startX + x * CUBE_LENGTH) * -1, (y *CUBE_LENGTH + (int)(CHUNK_SIZE * 0.8)) * -1, (startZ + z * CUBE_LENGTH) * -1);
 
             textureLocation[x][y][z] = textureStartLocation;
 
             textureStartLocation += 48;
 
-            blocks[x][y][z] = new Block(blockType);
+            blocks[x][y][z] = new Block(blockType, position);
             vertexTextureData.put(createTexCube((float) 0, (float) 0, blocks[x][y][z]));
 
             return;

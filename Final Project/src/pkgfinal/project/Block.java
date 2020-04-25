@@ -66,6 +66,14 @@ public class Block {
         this.colliderSize = new Vector3f(Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2);
     }
     
+    public Block(BlockType blockType, Vector3f position) {
+        this.blockType = blockType;
+        this.hitCount = 0;
+        this.isActive = true;
+        this.colliderSize = new Vector3f(Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2);
+        setBlockCoordinates(position);
+    }
+    
     //method: setBlockCoordinates
     //purpose: sets the current blocks coordinates in the world with specified x,y,z. (explicit)
     public void setBlockCoordinates(float x, float y, float z) {
