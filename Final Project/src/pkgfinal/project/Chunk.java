@@ -4,9 +4,11 @@ package pkgfinal.project;
  * *************************************************************
  * file: Chunk.java
  *
- * author: Bryce Callender class: CS 4450 - Computer Graphics
+ * author: Thomas Blaauw Barbosa, Bryce Callender, Jordan Laidig
+ * class: CS 4450 - Computer Graphics
  *
- * assignment: Final_Project date last modified: April 6, 2020
+ * assignment: Final_Project 
+ * date last modified: April 26, 2020
  *
  * purpose: This class is responsible for rendering the chunks. The chunks have
  * a defined size specified in the class and will texture the blocks once they

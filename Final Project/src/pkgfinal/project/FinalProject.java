@@ -29,7 +29,7 @@ public class FinalProject {
     //method: Start
     //purpose: This is used to start the window and run the program
     public void start() {
-        camera = new CameraController(-30f, -60f, -20f); //creates the camera
+        camera = new CameraController(-30f, -60f, -20f); //creates the camera and places it above the world. 
         try {
             createWindow();
             initGL();

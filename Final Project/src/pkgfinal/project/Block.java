@@ -4,11 +4,11 @@ package pkgfinal.project;
 /***************************************************************
 * file: Block.java
 * 
-* author: Bryce Callender
+* author: Bryce Callender, Jordan Laidig
 * class: CS 4450 - Computer Graphics
 *
 * assignment: Final_Project
-* date last modified: April 6, 2020
+* date last modified: April 26, 2020
 *
 * purpose: A data container used for storing properties related
 * to the building blocks of our minecraft game. Has the type,
@@ -66,6 +66,9 @@ public class Block {
         this.colliderSize = new Vector3f(Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2, Chunk.CUBE_LENGTH/2);
     }
     
+    //method: Block
+    //purpose: constructor used to take in a block type object to finalize the 
+    //contents of this block made and set its position.
     public Block(BlockType blockType, Vector3f position) {
         this.blockType = blockType;
         this.hitCount = 0;
@@ -91,6 +94,8 @@ public class Block {
         this.z = coordinates.z;
     }
     
+    //method: getBlockCoordinates
+    //purpose: to return a Vector that holds the center of the block.
     public Vector3f getBlockCoordinates(){
         Vector3f position = new Vector3f(x, y, z);
 
