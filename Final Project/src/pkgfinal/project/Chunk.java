@@ -4,8 +4,8 @@ package pkgfinal.project;
  * *************************************************************
  * file: Chunk.java
  *
- * author: Thomas Blaauw Barbosa, Bryce Callender, Jordan Laidig
- * class: CS 4450 - Computer Graphics
+ * author: Thomas Blaauw Barbosa, Bryce Callender, Jordan Laidig class: CS 4450
+ * - Computer Graphics
  *
  * assignment: Final_Project 
  * date last modified: April 26, 2020
@@ -68,8 +68,8 @@ public class Chunk {
 
         // Fill each row with -1.  
         for (int[][] row : textureLocation) {
-            for (int[] rowColumn : row) {
-                Arrays.fill(rowColumn, -1);
+            for (int[] column : row) {
+                Arrays.fill(column, -1);
             }
         }
 
@@ -102,6 +102,7 @@ public class Chunk {
         glTexCoordPointer(2, GL_FLOAT, 0, 0L); //2 since u and v coordinates
 
         glNormalPointer(GL_FLOAT, 0, 0L);
+        //glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
 
         //The actual drawcall
         //We tell it to draw quads from index to index
@@ -149,9 +150,11 @@ public class Chunk {
                             )
                     );
 
+                    normalData.put(createNormalData());
+
                     textureLocation[x][y][z] = textureStartLocation;
                     textureStartLocation += 48;
-                    Vector3f position = new Vector3f((startX + x * CUBE_LENGTH) * -1, (y *CUBE_LENGTH + (int)(CHUNK_SIZE * 0.8)) * -1, (startZ + z * CUBE_LENGTH) * -1);
+                    Vector3f position = new Vector3f((startX + x * CUBE_LENGTH) * -1, (y * CUBE_LENGTH + (int) (CHUNK_SIZE * 0.8)) * -1, (startZ + z * CUBE_LENGTH) * -1);
 
                     //Base ground
                     if (y == 0) {
@@ -201,6 +204,11 @@ public class Chunk {
         glBufferData(GL_ARRAY_BUFFER, vertexTextureData, GL_STATIC_DRAW);
         //free it
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        //glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
+        //glBufferData(GL_ARRAY_BUFFER, normalData, GL_STATIC_DRAW);
+        //free it
+        //glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     //method: createCubeVertexCol
@@ -212,8 +220,10 @@ public class Chunk {
         }
         return cubeColors;
     }
-    
-    public Block getBlock(int i, int j, int k){
+
+    //method: getBlock
+    //purpose: returns the reference of the block at the specific indices
+    public Block getBlock(int i, int j, int k) {
         return blocks[i][j][k];
     }
 
@@ -261,19 +271,39 @@ public class Chunk {
         return new float[]{1, 1, 1};
     }
 
+    //method: createNormalData
+    //purpose: returns the normals for the cube
     private float[] createNormalData() {
         return new float[]{
             //Top
             0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, 0.0f,
             //Bottom
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,
             0.0f, -1.0f, 0.0f,
             //Front
             0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
+            0.0f, 0.0f, -1.0f,
             //Back
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, 1.0f,
             0.0f, 0.0f, 1.0f,
             //Left
             -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
+            -1.0f, 0.0f, 0.0f,
             //Right
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f
         };
     }
@@ -493,6 +523,8 @@ public class Chunk {
         return new float[]{};
     }
 
+    //method: generateWater
+    //purpose: generates a lake if a random number generator is above 0.7 so a 30% chance to have a lake in the chunk
     private void generateWater(FloatBuffer vertexPositionData, FloatBuffer vertexColorData, FloatBuffer vertexTextureData) {
         float bodyOfWaterDecider = random.nextFloat();
 
@@ -520,6 +552,11 @@ public class Chunk {
         }
     }
 
+    //method: generateSandyBorders
+    //purpose: Since we generated a lake this is needed in order to contain in 
+    //a body of sand. It will go around the lake and below the lake filing the blocks
+    //with sand. If the block is null where a sand should be placed a new one will be
+    //constructed and placed there
     private void generateSandyBorders(int waterStartX, int waterStartY, int waterStartZ,
             int radius, int depth,
             FloatBuffer vertexPositionData, FloatBuffer vertexColorData, FloatBuffer vertexTextureData) {
@@ -542,6 +579,11 @@ public class Chunk {
         }
     }
 
+    //method: changeBlockInformation
+    //purpose: Changes the block information at indicies x,y,z with the block type
+    //specified as a parameter. If the block is null at the indices a new one is constructed
+    //and placed at the world coordinates needed and the color/texture generated based on type
+    //as well.
     private void changeBlockInformation(int x, int y, int z, Block.BlockType blockType,
             FloatBuffer vertexPositionData, FloatBuffer vertexColorData, FloatBuffer vertexTextureData) {
         int index = textureLocation[x][y][z];
@@ -556,7 +598,7 @@ public class Chunk {
             );
 
             vertexColorData.put(createCubeVertexCol(getCubeColor(blocks[x][y][z])));
-            Vector3f position = new Vector3f((startX + x * CUBE_LENGTH) * -1, (y *CUBE_LENGTH + (int)(CHUNK_SIZE * 0.8)) * -1, (startZ + z * CUBE_LENGTH) * -1);
+            Vector3f position = new Vector3f((startX + x * CUBE_LENGTH) * -1, (y * CUBE_LENGTH + (int) (CHUNK_SIZE * 0.8)) * -1, (startZ + z * CUBE_LENGTH) * -1);
 
             textureLocation[x][y][z] = textureStartLocation;
 
@@ -571,5 +613,5 @@ public class Chunk {
         blocks[x][y][z] = new Block(blockType);
         vertexTextureData.put(index, createTexCube((float) 0, (float) 0, blocks[x][y][z]));
     }
-    
+
 }

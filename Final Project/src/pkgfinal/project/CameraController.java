@@ -12,6 +12,7 @@
  *************************************************************** */
 package pkgfinal.project;
 
+import java.nio.FloatBuffer;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -19,6 +20,7 @@ import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.Sys;
 import java.util.ArrayList;
+import org.lwjgl.BufferUtils;
 
 public class CameraController {
 
@@ -70,7 +72,6 @@ public class CameraController {
         float dz = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x -= dx;
         position.z += dz;
-
     }
 
     //method: moveBackward
@@ -118,6 +119,11 @@ public class CameraController {
         glRotatef(pitch, 1f, 0f, 0f);
         glRotatef(yaw, 0f, 1f, 0f);
         glTranslatef(position.x, position.y, position.z);
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(-position.x).put(
+        -position.y).put(-position.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
    
     //method: checkCollision
@@ -447,7 +453,7 @@ public class CameraController {
                     waterJump = true; //sets the water physics.
                 }
             }
-        }       
+        }        
     }
 
     //method: gameLoop
@@ -508,7 +514,7 @@ public class CameraController {
             if ((Keyboard.isKeyDown(Keyboard.KEY_SPACE)) && waterJump) {
                 moveDown(movementSpeed);
                 yVelocity = 0.0f;
-            }
+            } 
             //jump
             //updates the yVelocity
             

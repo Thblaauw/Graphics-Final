@@ -77,8 +77,6 @@ public class FinalProject {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
         
-        glEnable(GL_COLOR_MATERIAL);
-        
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
